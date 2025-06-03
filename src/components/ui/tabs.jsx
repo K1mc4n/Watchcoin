@@ -1,28 +1,34 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 export function Tabs({ defaultValue, children }) {
-  const [value, setValue] = useState(defaultValue);
-  return React.Children.map(children, child =>
-    React.cloneElement(child, { value, setValue })
+  const [activeTab, setActiveTab] = useState(defaultValue);
+  return (
+    <div>
+      {React.Children.map(children, (child) => {
+        if (!React.isValidElement(child)) return child;
+        return React.cloneElement(child, { activeTab, setActiveTab });
+      })}
+    </div>
   );
 }
 
 export function TabsList({ children }) {
-  return <div className="flex space-x-2 my-4">{children}</div>;
+  return <div className="flex space-x-2 mb-4">{children}</div>;
 }
 
-export function TabsTrigger({ value: tab, value: currentValue, setValue, children }) {
-  const active = currentValue === tab;
+export function TabsTrigger({ value, children, activeTab, setActiveTab }) {
+  const isActive = activeTab === value;
   return (
     <button
-      onClick={() => setValue(tab)}
-      className={`px-4 py-2 rounded ${active ? "bg-black text-white" : "bg-gray-100"}`}
+      className={`px-4 py-2 rounded ${isActive ? 'bg-blue-600 text-white' : 'bg-gray-200 text-black'}`}
+      onClick={() => setActiveTab(value)}
     >
       {children}
     </button>
   );
 }
 
-export function TabsContent({ value, children }) {
+export function TabsContent({ value, children, activeTab }) {
+  if (value !== activeTab) return null;
   return <div>{children}</div>;
 }
